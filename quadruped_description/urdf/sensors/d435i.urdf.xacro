@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+
+<!--
+License: Apache 2.0. See LICENSE file in root directory.
+Copyright(c) 2017 Intel Corporation. All Rights Reserved
+
+This is the URDF model for the Intel RealSense 430 camera, in its
+aluminum peripherial evaluation case.
+-->
+
+<robot name="d435i" xmlns:xacro="http://ros.org/wiki/xacro">
+  
+  <xacro:macro name="d435i" params=" *origin">
+    <link name="camera_bottom_screw_frame">
+        <visual>
+        <geometry>
+            <mesh filename="file://$(find quadruped_description)/meshes/d435.dae" />
+        </geometry>
+        </visual>
+        <collision>
+        <geometry>
+            <mesh filename="file://$(find quadruped_description)/meshes/d435.dae" />
+        </geometry>
+        </collision>
+
+    </link>
+
+    <link name="camera_link"></link>
+
+    <link name="camera_depth_frame"></link>
+
+    <link name="camera_depth_optical_frame"></link>
+
+    <link name="camera_color_frame"></link>
+
+    <link name="camera_color_optical_frame"></link>
+
+    <link name="camera_left_ir_frame"></link>
+
+    <link name="camera_left_ir_optical_frame"></link>
+
+    <link name="camera_right_ir_frame"></link>
+
+    <link name="camera_right_ir_optical_frame"></link>
+
+
+    <joint name="camera_joint" type="fixed">
+        <xacro:insert_block name="origin" />
+        <parent link="base" />
+        <child link="camera_bottom_screw_frame" />
+        <pose xyz="0.4 0 0.25" rpy="0 0 0" />
+    </joint>
+
+    <joint name="camera_link_joint" type="fixed">
+        <parent link="camera_bottom_screw_frame" />
+        <child link="camera_link" />
+        <pose xyz="0 0.0175 0.0125 " rpy="0 0 0" />
+    </joint>
+
+    <joint name="camera_depth_joint" type="fixed">
+        <parent link="camera_link" />
+        <child link="camera_depth_frame" />
+        <pose xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+
+    <joint name="camera_depth_optical_joint" type="fixed">
+        <parent link="camera_depth_frame" />
+        <child link="camera_depth_optical_frame" />
+        <pose xyz="0 0 0 " rpy="-1.57 0 -1.57" />
+    </joint>
+
+    <joint name="camera_color_joint" type="fixed">
+        <parent link="camera_depth_frame" />
+        <child link="camera_color_frame" />
+        <pose xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+
+    <joint name="camera_color_optical_joint" type="fixed">
+        <parent link="camera_color_frame" />
+        <child link="camera_color_optical_frame" />
+        <pose xyz="0 0 0 " rpy="-1.57 0 -1.57" />
+    </joint>
+
+    <joint name="camera_left_ir_joint" type="fixed">
+        <parent link="camera_depth_frame" />
+        <child link="camera_left_ir_frame" />
+        <pose xyz="0 0 0 " rpy="0 0 0 " />
+    </joint>
+
+    <joint name="camera_left_ir_optical_joint" type="fixed">
+        <parent link="camera_left_ir_frame" />
+        <child link="camera_left_ir_optical_frame" />
+        <pose xyz="0 0 0 " rpy="-1.57 0 -1.57" />
+    </joint>
+
+    <joint name="camera_right_ir_joint" type="fixed">
+        <parent link="camera_depth_frame" />
+        <child link="camera_right_ir_frame" />
+        <pose xyz="0 -0.050 0 " rpy="0 0 0" />
+    </joint>
+
+    <joint name="camera_right_ir_optical_joint" type="fixed">
+        <parent link="camera_right_ir_frame" />
+        <child link="camera_right_ir_optical_frame" />
+        <pose xyz="0 0 0 " rpy="-1.57 0 -1.57" />
+    </joint>
+
+        
+
+    <gazebo reference="camera_link">
+        <plugin name="camera" filename="librealsense_gazebo_plugin.so">
+            <prefix>camera</prefix>
+            <depthUpdateRate>30.0</depthUpdateRate>
+            <colorUpdateRate>30.0</colorUpdateRate>
+            <infraredUpdateRate>1.0</infraredUpdateRate>
+            <depthTopicName>aligned_depth_to_color/image_raw</depthTopicName>
+            <depthCameraInfoTopicName>depth/camera_info</depthCameraInfoTopicName>
+            <colorTopicName>color/image_raw</colorTopicName>
+            <colorCameraInfoTopicName>color/camera_info</colorCameraInfoTopicName>
+            <infrared1TopicName>infra1/image_raw</infrared1TopicName>
+            <infrared1CameraInfoTopicName>infra1/camera_info</infrared1CameraInfoTopicName>
+            <infrared2TopicName>infra2/image_raw</infrared2TopicName>
+            <infrared2CameraInfoTopicName>infra2/camera_info</infrared2CameraInfoTopicName>
+            <colorOpticalframeName>camera_color_optical_frame</colorOpticalframeName>
+            <depthOpticalframeName>camera_depth_optical_frame</depthOpticalframeName>
+            <infrared1OpticalframeName>camera_left_ir_optical_frame</infrared1OpticalframeName>
+            <infrared2OpticalframeName>camera_right_ir_optical_frame</infrared2OpticalframeName>
+            <rangeMinDepth>0.3</rangeMinDepth>
+            <rangeMaxDepth>3.0</rangeMaxDepth>
+            <pointCloud>true</pointCloud>
+            <pointCloudTopicName>depth/color/points</pointCloudTopicName>
+            <pointCloudCutoff>0.3</pointCloudCutoff>
+        </plugin>
+    </gazebo>
+  </xacro:macro>
+
+</robot>
